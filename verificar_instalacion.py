@@ -7,7 +7,29 @@ Testea que todas las dependencias necesarias esten correctamente instaladas.
 
 import sys
 import importlib
+import locale
 from typing import List, Tuple
+
+# Detectar si podemos usar caracteres Unicode
+def supports_unicode():
+    """Detecta si el sistema soporta caracteres Unicode."""
+    try:
+        encoding = sys.stdout.encoding or locale.getpreferredencoding()
+        # Intentar codificar un checkmark
+        '✓'.encode(encoding)
+        return True
+    except (UnicodeEncodeError, AttributeError):
+        return False
+
+USE_UNICODE = supports_unicode()
+
+# Símbolos según soporte Unicode
+if USE_UNICODE:
+    CHECK = '✓'
+    CROSS = '✗'
+else:
+    CHECK = '[OK]'
+    CROSS = '[X]'
 
 # Colores para output
 GREEN = '\033[92m'
@@ -60,18 +82,18 @@ def main():
         results.append((display_name, success, info))
 
         if success:
-            print(f"  {GREEN}✓{RESET} {display_name:<20} {GREEN}OK{RESET} (v{info})")
+            print(f"  {GREEN}{CHECK}{RESET} {display_name:<20} {GREEN}OK{RESET} (v{info})")
         else:
-            print(f"  {RED}✗{RESET} {display_name:<20} {RED}FALTA{RESET}")
+            print(f"  {RED}{CROSS}{RESET} {display_name:<20} {RED}FALTA{RESET}")
             all_ok = False
 
     # Verificar Python version
     print(f"\n{YELLOW}Verificando version de Python...{RESET}\n")
     py_version = sys.version_info
     if py_version.major == 3 and py_version.minor >= 10:
-        print(f"  {GREEN}✓{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {GREEN}OK{RESET}")
+        print(f"  {GREEN}{CHECK}{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {GREEN}OK{RESET}")
     else:
-        print(f"  {RED}✗{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {RED}(Se recomienda Python 3.10+){RESET}")
+        print(f"  {RED}{CROSS}{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {RED}(Se recomienda Python 3.10+){RESET}")
         all_ok = False
 
     # Test basico de funcionalidad
@@ -81,9 +103,9 @@ def main():
         import numpy as np
         test_array = np.array([1, 2, 3])
         assert test_array.sum() == 6
-        print(f"  {GREEN}✓{RESET} NumPy funciona correctamente")
+        print(f"  {GREEN}{CHECK}{RESET} NumPy funciona correctamente")
     except Exception as e:
-        print(f"  {RED}✗{RESET} Error en NumPy: {e}")
+        print(f"  {RED}{CROSS}{RESET} Error en NumPy: {e}")
         all_ok = False
 
     try:
@@ -92,9 +114,9 @@ def main():
         import matplotlib.pyplot as plt
         fig, ax = plt.subplots()
         plt.close(fig)
-        print(f"  {GREEN}✓{RESET} Matplotlib funciona correctamente")
+        print(f"  {GREEN}{CHECK}{RESET} Matplotlib funciona correctamente")
     except Exception as e:
-        print(f"  {RED}✗{RESET} Error en Matplotlib: {e}")
+        print(f"  {RED}{CROSS}{RESET} Error en Matplotlib: {e}")
         all_ok = False
 
     try:
@@ -103,22 +125,22 @@ def main():
         env = gym.make('CartPole-v1')
         env.reset()
         env.close()
-        print(f"  {GREEN}✓{RESET} Gymnasium funciona correctamente")
+        print(f"  {GREEN}{CHECK}{RESET} Gymnasium funciona correctamente")
     except Exception as e:
-        print(f"  {RED}✗{RESET} Error en Gymnasium: {e}")
+        print(f"  {RED}{CROSS}{RESET} Error en Gymnasium: {e}")
         all_ok = False
 
     # Resumen final
     print(f"\n{BLUE}{'='*60}{RESET}\n")
 
     if all_ok:
-        print(f"{GREEN}✓ ¡Todas las dependencias están correctamente instaladas!{RESET}")
+        print(f"{GREEN}{CHECK} ¡Todas las dependencias están correctamente instaladas!{RESET}")
         print(f"\n{YELLOW}Puedes comenzar a trabajar con las notebooks del curso.{RESET}")
         print(f"\nPara iniciar Jupyter, ejecuta:")
         print(f"  {BLUE}jupyter notebook{RESET}")
         return 0
     else:
-        print(f"{RED}✗ Faltan algunas dependencias o hay errores.{RESET}")
+        print(f"{RED}{CROSS} Faltan algunas dependencias o hay errores.{RESET}")
         print(f"\n{YELLOW}Para instalar el ambiente completo, ejecuta:{RESET}")
         print(f"  {BLUE}conda env create -f environment.yml{RESET}")
         print(f"  {BLUE}conda activate taller-ia{RESET}")
