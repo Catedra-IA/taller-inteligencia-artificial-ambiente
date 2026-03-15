@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Script de verificacion de instalacion del ambiente para Taller de IA.
+Testea que todas las dependencias necesarias esten correctamente instaladas.
+"""
+
+import sys
+import importlib
+from typing import List, Tuple
+
+# Colores para output
+GREEN = '\033[92m'
+RED = '\033[91m'
+YELLOW = '\033[93m'
+BLUE = '\033[94m'
+RESET = '\033[0m'
+
+def check_import(module_name: str, package_name: str = None) -> Tuple[bool, str]:
+    """
+    Intenta importar un módulo y retorna si fue exitoso junto con info de versión.
+
+    Args:
+        module_name: nombre del módulo a importar
+        package_name: nombre alternativo del paquete (ej: 'PIL' vs 'pillow')
+
+    Returns:
+        (success, version_info)
+    """
+    try:
+        module = importlib.import_module(module_name)
+        version = getattr(module, '__version__', 'sin versión disponible')
+        return True, version
+    except ImportError as e:
+        return False, str(e)
+
+def main():
+    print(f"\n{BLUE}{'='*60}")
+    print("  Verificacion de Instalacion - Taller de IA")
+    print(f"{'='*60}{RESET}\n")
+
+    # Lista de dependencias a verificar
+    dependencies = [
+        ("numpy", "NumPy"),
+        ("matplotlib", "Matplotlib"),
+        ("gymnasium", "Gymnasium"),
+        ("tqdm", "tqdm"),
+        ("IPython", "IPython"),
+        ("jupyter", "Jupyter"),
+        ("notebook", "Jupyter Notebook"),
+    ]
+
+    all_ok = True
+    results = []
+
+    print(f"{YELLOW}Verificando dependencias principales...{RESET}\n")
+
+    for module_name, display_name in dependencies:
+        success, info = check_import(module_name)
+        results.append((display_name, success, info))
+
+        if success:
+            print(f"  {GREEN}✓{RESET} {display_name:<20} {GREEN}OK{RESET} (v{info})")
+        else:
+            print(f"  {RED}✗{RESET} {display_name:<20} {RED}FALTA{RESET}")
+            all_ok = False
+
+    # Verificar Python version
+    print(f"\n{YELLOW}Verificando version de Python...{RESET}\n")
+    py_version = sys.version_info
+    if py_version.major == 3 and py_version.minor >= 10:
+        print(f"  {GREEN}✓{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {GREEN}OK{RESET}")
+    else:
+        print(f"  {RED}✗{RESET} Python {py_version.major}.{py_version.minor}.{py_version.micro} {RED}(Se recomienda Python 3.10+){RESET}")
+        all_ok = False
+
+    # Test basico de funcionalidad
+    print(f"\n{YELLOW}Ejecutando tests basicos...{RESET}\n")
+
+    try:
+        import numpy as np
+        test_array = np.array([1, 2, 3])
+        assert test_array.sum() == 6
+        print(f"  {GREEN}✓{RESET} NumPy funciona correctamente")
+    except Exception as e:
+        print(f"  {RED}✗{RESET} Error en NumPy: {e}")
+        all_ok = False
+
+    try:
+        import matplotlib
+        matplotlib.use('Agg')  # Backend sin GUI para testing
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        plt.close(fig)
+        print(f"  {GREEN}✓{RESET} Matplotlib funciona correctamente")
+    except Exception as e:
+        print(f"  {RED}✗{RESET} Error en Matplotlib: {e}")
+        all_ok = False
+
+    try:
+        import gymnasium as gym
+        # Test simple sin dependencias complejas
+        env = gym.make('CartPole-v1')
+        env.reset()
+        env.close()
+        print(f"  {GREEN}✓{RESET} Gymnasium funciona correctamente")
+    except Exception as e:
+        print(f"  {RED}✗{RESET} Error en Gymnasium: {e}")
+        all_ok = False
+
+    # Resumen final
+    print(f"\n{BLUE}{'='*60}{RESET}\n")
+
+    if all_ok:
+        print(f"{GREEN}✓ ¡Todas las dependencias están correctamente instaladas!{RESET}")
+        print(f"\n{YELLOW}Puedes comenzar a trabajar con las notebooks del curso.{RESET}")
+        print(f"\nPara iniciar Jupyter, ejecuta:")
+        print(f"  {BLUE}jupyter notebook{RESET}")
+        return 0
+    else:
+        print(f"{RED}✗ Faltan algunas dependencias o hay errores.{RESET}")
+        print(f"\n{YELLOW}Para instalar el ambiente completo, ejecuta:{RESET}")
+        print(f"  {BLUE}conda env create -f environment.yml{RESET}")
+        print(f"  {BLUE}conda activate taller-ia{RESET}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
