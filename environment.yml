@@ -11,6 +11,9 @@ dependencies:
   # Reinforcement Learning
   - gymnasium>=1.0
   - pygame>=2.1
+  # Video recording (for RecordVideo wrapper)
+  - moviepy
+  - ffmpeg
   # Jupyter environment
   - jupyter
   - ipython

@@ -150,15 +150,43 @@ jobs:
         print('Matplotlib 3D OK')
         "
 
-    - name: Test RecordVideo wrapper (no actual recording)
+    - name: Test MoviePy and FFmpeg
+      shell: bash -l {0}
+      run: |
+        conda activate taller-ia
+        python -c "
+        import moviepy
+        print(f'MoviePy {moviepy.__version__} OK')
+        "
+        # Test ffmpeg is available
+        ffmpeg -version
+
+    - name: Test RecordVideo wrapper with actual video creation
       shell: bash -l {0}
       run: |
         conda activate taller-ia
         python -c "
         import gymnasium as gym
         from gymnasium.wrappers import RecordVideo
-        print('RecordVideo import OK')
-        # Note: We don't actually create videos in CI to avoid dependencies
+        import os
+        import shutil
+        # Create a test video directory
+        test_dir = 'test_videos'
+        os.makedirs(test_dir, exist_ok=True)
+        # Create environment with RecordVideo wrapper
+        env = gym.make('CartPole-v1', render_mode='rgb_array')
+        env = RecordVideo(env, video_folder=test_dir, episode_trigger=lambda x: True)
+        # Run one episode
+        env.reset()
+        for _ in range(10):
+            env.step(env.action_space.sample())
+        env.close()
+        # Check video was created
+        videos = [f for f in os.listdir(test_dir) if f.endswith('.mp4')]
+        assert len(videos) > 0, 'No video file was created'
+        print(f'RecordVideo OK - Created {len(videos)} video(s)')
+        # Cleanup
+        shutil.rmtree(test_dir)
         "
 
     - name: Export environment for debugging (on failure)

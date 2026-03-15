@@ -66,6 +66,8 @@ def main():
         ("numpy", "NumPy"),
         ("matplotlib", "Matplotlib"),
         ("gymnasium", "Gymnasium"),
+        ("pygame", "Pygame"),
+        ("moviepy", "MoviePy"),
         ("tqdm", "tqdm"),
         ("IPython", "IPython"),
         ("jupyter", "Jupyter"),
@@ -128,6 +130,21 @@ def main():
         print(f"  {GREEN}{CHECK}{RESET} Gymnasium funciona correctamente")
     except Exception as e:
         print(f"  {RED}{CROSS}{RESET} Error en Gymnasium: {e}")
+        all_ok = False
+
+    try:
+        import subprocess
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"  {GREEN}{CHECK}{RESET} FFmpeg disponible")
+        else:
+            print(f"  {RED}{CROSS}{RESET} FFmpeg no responde correctamente")
+            all_ok = False
+    except FileNotFoundError:
+        print(f"  {RED}{CROSS}{RESET} FFmpeg no encontrado (necesario para grabar videos)")
+        all_ok = False
+    except Exception as e:
+        print(f"  {RED}{CROSS}{RESET} Error verificando FFmpeg: {e}")
         all_ok = False
 
     # Resumen final

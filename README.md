@@ -16,10 +16,13 @@ Este repositorio público proporciona:
 
 El ambiente `taller-ia` incluye las siguientes dependencias:
 
-- **Python 3.11**
+- **Python 3.12**
 - **NumPy** >= 1.24, < 2.0 - Computación numérica
-- **Matplotlib** >= 3.7 - Visualización
-- **Gymnasium** >= 0.29 - Ambientes de Reinforcement Learning
+- **Matplotlib** >= 3.7 - Visualización y gráficos 3D
+- **Gymnasium** >= 1.0 - Ambientes de Reinforcement Learning
+- **Pygame** >= 2.1 - Rendering de ambientes personalizados
+- **MoviePy** - Creación de videos (para RecordVideo wrapper)
+- **FFmpeg** - Codificación de videos
 - **Jupyter** - Notebooks interactivas
 - **tqdm** - Barras de progreso
 
