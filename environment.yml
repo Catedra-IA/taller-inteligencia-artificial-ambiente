@@ -6,7 +6,7 @@ dependencies:
   - python=3.12
   - pip
   # Core scientific computing
-  - numpy>=1.24,<2.0
+  - numpy
   - matplotlib>=3.7
   # Reinforcement Learning
   - gymnasium>=1.0
