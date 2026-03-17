@@ -7,7 +7,7 @@ dependencies:
   - pip
   # Core scientific computing
   - numpy
-  - matplotlib>=3.7
+  - matplotlib>=3.9
   # Reinforcement Learning
   - gymnasium>=1.0
   - pygame>=2.1
