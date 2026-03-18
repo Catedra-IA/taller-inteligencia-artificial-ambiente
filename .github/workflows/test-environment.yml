@@ -129,6 +129,19 @@ jobs:
         print('Blackjack-v1 OK')
         "
 
+    - name: Test Gymnasium Box2D environments
+      shell: bash -l {0}
+      run: |
+        conda activate taller-ia
+        python -c "
+        import gymnasium as gym
+        env = gym.make('LunarLander-v3')
+        env.reset()
+        env.step(env.action_space.sample())
+        env.close()
+        print('LunarLander-v3 (Box2D) OK')
+        "
+
     - name: Test Matplotlib 3D plotting
       shell: bash -l {0}
       run: |
