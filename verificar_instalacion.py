@@ -260,6 +260,23 @@ def main():
         fail(f"IPython.display: {e}")
         all_ok = False
 
+    # -- Box2D environments --
+    print(f"\n  {BLUE}Box2D (ambientes de control continuo){RESET}")
+    try:
+        import gymnasium as gym
+        env = gym.make('LunarLander-v3')
+        observation, info = env.reset()
+        episode_over = False
+        while not episode_over:
+            action = env.action_space.sample()
+            observation, reward, terminated, truncated, info = env.step(action)
+            episode_over = terminated or truncated
+        env.close()
+        ok("Gymnasium: LunarLander-v3 (Box2D)")
+    except Exception as e:
+        fail(f"Gymnasium LunarLander-v3: {e}")
+        all_ok = False
+
     # -- RecordVideo end-to-end --
     print(f"\n  {BLUE}RecordVideo (grabacion de episodios){RESET}")
     try:

@@ -10,6 +10,7 @@ dependencies:
   - matplotlib>=3.9
   # Reinforcement Learning
   - gymnasium>=1.0
+  - gymnasium-box2d
   - pygame>=2.1
   # Video recording (for RecordVideo wrapper)
   - moviepy
